@@ -13,23 +13,23 @@ NodeFile::NodeFile(const std::string& filename) throw (BadFileOpen)
 {
     header = FileHeader();
     newfile = access(filename.c_str(), 0) != 0;
-    printf("%i\n", newfile);
     // ---- open the file
     // ChatGPT fix: When opening a file with both std::ios::in and std::ios::out without std::ios::trunc or std::ios::app, the file must already exist; otherwise, fstream::open will fail.
-    if (newfile) {
-        nfile.open(filename.c_str(), std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-    } else {
-        nfile.open(filename.c_str(), std::ios::in | std::ios::out | std::ios::binary);
-    }
-    if (nfile.fail())
-    {
-        throw BadFileOpen();
-    }
     if (!newfile) {
+        nfile.open(filename.c_str(), std::ios::in | std::ios::out | std::ios::binary);
+        if (nfile.fail())
+        {
+            throw BadFileOpen();
+        }
         // an existing file, read the header
         ReadData(&header, sizeof header);
     }
     else {
+        nfile.open(filename.c_str(), std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+        if (nfile.fail())
+        {
+            throw BadFileOpen();
+        }
         // ------ creating the file, write the empty header
         WriteData(&header, sizeof header);
     }
@@ -67,7 +67,7 @@ void NodeFile::WriteData(const void *buf, unsigned short siz, long wh) throw (Fi
 
     if (nfile.fail()) {
         nfile.clear();
-        printf("Write error");
+        printf("Write error\n");
         throw FileWriteError();
     }
     nfile.seekg(nfile.tellp());
