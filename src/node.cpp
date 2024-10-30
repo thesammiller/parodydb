@@ -4,7 +4,6 @@
 // Parody Node and NodeFile class member functions
 // ======
 
-#include <sys/uio.h>
 #include <unistd.h>
 
 #include "node.h"
@@ -67,7 +66,6 @@ void NodeFile::WriteData(const void *buf, unsigned short siz, long wh) throw (Fi
 
     if (nfile.fail()) {
         nfile.clear();
-        printf("Write error\n");
         throw FileWriteError();
     }
     nfile.seekg(nfile.tellp());
