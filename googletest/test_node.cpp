@@ -15,15 +15,15 @@ TEST(NodeTest, NodeFileCreateWriteOpen) {
   int string_size = 16;
   std::string filename = "./testfile.txt";
   try {
-    auto *myNodeFile = new NodeFile(filename);
-    myNodeFile->header.deletednode = 1;
-    myNodeFile->header.highestnode = 2;
-    myNodeFile->WriteData(&(myNodeFile->header), sizeof myNodeFile->header, 0);
-    myNodeFile->nfile.close();
+    NodeFile myNodeFile(filename);
+    myNodeFile.header.deletednode = 1;
+    myNodeFile.header.highestnode = 2;
+    myNodeFile.WriteData(&(myNodeFile.header), sizeof myNodeFile.header, 0);
+    myNodeFile.nfile.close();
     // This NodeFile has an implicit ReadData
     NodeFile checkNode(filename);
     remove(filename.c_str());
-    EXPECT_EQ(checkNode.header.deletednode, myNodeFile->header.deletednode);
+    EXPECT_EQ(checkNode.header.deletednode, myNodeFile.header.deletednode);
   }catch (FileReadError) {
     remove(filename.c_str());
   }
