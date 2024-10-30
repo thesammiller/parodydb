@@ -1,0 +1,59 @@
+//
+// Created by Sam Miller on 10/29/24.
+//
+#include <gtest/gtest.h>
+#include "../src/key.h"
+
+// Can't test PdyKey directly since it's abstract
+//====
+// TestPdyKey
+// ====
+class TestPdyKey : public PdyKey {
+public:
+  virtual void WriteKey(IndexFile &bfile) {};
+  virtual void ReadKey(IndexFile &bfile) {};
+  bool isNullValue(IndexFile &bfile);
+  void CopyKeyData(const PdyKey &key) {}
+  bool isObjectAddress() const
+    { return false; }
+  const ObjAddr *ObjectAddress() const
+    { return 0; }
+  PdyKey *MakeKey() const { return new TestPdyKey(1); };
+
+  PdyKey &operator=(const PdyKey &key) { return *this; };
+  TestPdyKey(const NodeNbr &nbr)
+    {lowernode = nbr; fileaddr = 0; };
+  ~TestPdyKey() {};
+  int operator>(const PdyKey &key) const { return false; }
+  int operator==(const PdyKey &key) const { return false; }
+};
+
+bool TestPdyKey::isNullValue(IndexFile &bfile) {
+  return true;
+}
+
+// struct Class
+TEST(PdyKeyTest, PdyConstructor) {
+  const NodeNbr nodenbr = 1;
+  TestPdyKey pdykey(nodenbr);
+  EXPECT_EQ(pdykey.lowernode, nodenbr);
+}
+
+TEST(PdyKeyTest, PdyKeyOperatorEq) {
+  const NodeNbr nodenbr1 = 1;
+  const NodeNbr nodenbr2 = 2;
+  TestPdyKey pdykey1(nodenbr1);
+  TestPdyKey pdykey2(nodenbr2);
+  pdykey1.fileaddr = nodenbr1;
+  pdykey1.lowernode = nodenbr1;
+  pdykey1.indexno = nodenbr1;
+  pdykey1.keylength = nodenbr1;
+  pdykey2 = pdykey1;
+  EXPECT_EQ(pdykey1.fileaddr, pdykey2.fileaddr);
+  EXPECT_EQ(pdykey1.lowernode, pdykey2.lowernode);
+  EXPECT_EQ(pdykey1.indexno, pdykey2.indexno);
+  EXPECT_EQ(pdykey1.keylength, pdykey2.keylength);
+}
+
+
+

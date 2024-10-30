@@ -5,7 +5,6 @@
 // ======
 
 #include <unistd.h>
-
 #include "node.h"
 
 NodeFile::NodeFile(const std::string& filename) throw (BadFileOpen)

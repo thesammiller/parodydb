@@ -17,7 +17,9 @@ class FileReadError: public std::exception {};
 class FileWriteError: public std::exception {};
 
 // ====
-// node file header record
+// FileHeader
+// -- NodeNbr deletednode
+// -- Nodenbr highestnode
 // ====
 class FileHeader {
 public:
@@ -28,7 +30,10 @@ public:
 };
 
 // ====
-// Node file header class
+// NodeFile class
+// -- FileHeader header;
+// -- fstream nfile
+// -- NodeFile(std::string& filename)
 // ====
 class NodeFile {
 public:

@@ -28,6 +28,7 @@ add_executable(
         src/node.cpp
         src/node.h
         src/structs.h
+        src/key.cpp
 )
 #target_include_directories(test_structs PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 #target_link_libraries(
