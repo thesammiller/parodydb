@@ -148,8 +148,15 @@ Node::~Node()
 // ------ compute the disk address of a node
 long Node::NodeAddress()
 {
+    // TODO: Added to prevent negative address
+    // May want to remove this later
+    // TODO: Is nodenbr  1 indexed, or 0 indexed?
+    if (nodenbr == 0) {
+        return 0;
+    }
     long adr = nodenbr - 1;
     adr *= nodelength;
+    // This gives a starting head of 4 when nodenbr = 1
     adr += sizeof(FileHeader);
     return adr;
 }
