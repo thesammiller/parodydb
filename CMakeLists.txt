@@ -22,11 +22,13 @@ enable_testing()
 
 add_subdirectory(googletest)
 
-#add_executable(
-#        test_structs
-#        test_structs.cpp
-#        structs.h
-#)
+add_executable(
+        parody
+        src/main.cpp
+        src/node.cpp
+        src/node.h
+        src/structs.h
+)
 #target_include_directories(test_structs PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 #target_link_libraries(
 #        test_structs
