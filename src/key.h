@@ -174,6 +174,8 @@ inline void Key<std::string>::CopyKeyData(const PdyKey &key)
     const auto* kp = dynamic_cast<const Key<std::string>*>(&key);
     if (kp) {
         ky = kp->ky;
+        // TODO: Confirm Bugfix
+        keylength = ky.length();
     }
 }
 

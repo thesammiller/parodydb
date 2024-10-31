@@ -151,8 +151,23 @@ TEST(KeyTest, NotisObjectAddress) {
   EXPECT_EQ(key1.isObjectAddress(), false);
 }
 
+TEST(KeyStringTest, Constructor) {
+  std::string value = "value";
+  Key<std::string> key1(value);
+  EXPECT_EQ(key1.keylength, value.length());
+}
 
-//std::string specialized functions
+TEST(KeyStringTest, CopyKeyData) {
+  std::string value1 = "value1";
+  std::string value2 = "mybigvalue2";
+  Key<std::string> key1(value1);
+  Key<std::string> key2(value2);
+  key1.CopyKeyData(key2);
+  EXPECT_EQ(key1.KeyValue(), key2.KeyValue());
+  EXPECT_EQ(key1.keylength, key2.keylength);
+}
+
+
 
 
 
