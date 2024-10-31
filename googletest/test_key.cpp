@@ -56,4 +56,14 @@ TEST(PdyKeyTest, PdyKeyOperatorEq) {
 }
 
 
+TEST(KeyTest, KeyConstructor) {
+  int value = 1;
+  Key<int> key(value);
+  EXPECT_EQ(key.KeyValue(), value);
+  EXPECT_EQ(key.keylength, sizeof(int));
+}
+
+
+
+
 

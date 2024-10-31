@@ -44,6 +44,9 @@ public:
         { keylength = kylen; }
 };
 
+
+
+
 // ======
 // Key class
 // =====
@@ -76,6 +79,15 @@ public:
 };
 
 
+
+template <class T>
+Key<T>::Key(const T& key) : ky(key)
+{
+    keylength = sizeof(T);
+}
+
+
+
 // ======
 // concatenated key class
 // =====
@@ -90,7 +102,7 @@ class CatKey : public PdyKey {
     const ObjAddr *ObjectAddress() const {
         return 0;
     }
-    void CopyKeyData(const PdyKey *key);
+    void CopyKeyData(const PdyKey &key);
     // ---- readkey/writekey must be specialized
     //    if key(s) != simple data type
     virtual void ReadKey(IndexFile &ndx) {
@@ -151,9 +163,9 @@ int CatKey<T1,T2>::operator==(const PdyKey &key) const
 }
 
 template <class T1, class T2>
-void CatKey<T1, T2>::CopyKeyData(const PdyKey *key)
+void CatKey<T1, T2>::CopyKeyData(const PdyKey &key)
 {
-    const CatKey<T1, T2> *ckp = static_cast<const CatKey<T1, T2>*>(&key);
+    const CatKey<T1, T2> *ckp = dynamic_cast<const CatKey<T1, T2>*>(&key);
     ky1 = ckp->ky1;
     ky2 = ckp->ky2;
 }
@@ -177,5 +189,125 @@ PdyKey *CatKey<T1, T2>::MakeKey() const
     newkey->SetKeyLength(keylength);
     return newkey;
 }
+
+template <class T>
+void Key<T>::CopyKeyData(const PdyKey &key)
+{
+    const Key<T> *kp = dynamic_cast<const Key<T>*>(&key);
+    ky = kp->ky;
+}
+
+template <class T>
+PdyKey &Key<T>::operator=(const PdyKey &key)
+{
+    if (this != &key) {
+        PdyKey::operator=(key);
+        CopyKeyData(key);
+    }
+    return *this;
+}
+
+template <class T>
+int Key<T>::operator>(const PdyKey &key) const
+{
+    const auto* kp = dynamic_cast<const Key<T>*>(&key);
+    if (kp) {
+        return ky > kp->ky;
+    }
+    return false;
+}
+
+template <class T>
+int Key<T>::operator==(const PdyKey &key) const
+{
+    const auto* kp = dynamic_cast<const Key<T>*>(&key);
+    if (kp) {
+        return ky == kp->ky;
+    }
+    return false;
+}
+
+template <class T>
+PdyKey *Key<T>::MakeKey() const
+{
+    PdyKey *newkey = new Key<T>(T(0));
+    newkey->SetKeyLength(keylength);
+    return newkey;
+}
+
+// --- ReadKey must be specialized if key != simple data type
+template <class T>
+void Key<T>::ReadKey(IndexFile &ndx)
+{
+    if (keylength > 0) {
+        ndx.ReadData(&ky, keylength);
+    }
+}
+
+// --- WriteKey must be specialized if key != simple data type
+template <class T>
+void Key<T>::WriteKey(IndexFile &ndx)
+{
+    if (keylength > 0) {
+        ndx.WriteData(&ky, keylength);
+    }
+}
+
+template <class T>
+bool Key<T>::isNullValue() const
+{
+    return ky == T(0);
+}
+
+// ======
+// specialized Key<string> template member functions
+// ======
+template<>
+inline Key<std::string>::Key(const std::string& key) : ky(key)
+{
+    keylength = key.length();
+}
+
+template<>
+inline void Key<std::string>::CopyKeyData(const PdyKey &key)
+{
+    const auto* kp = dynamic_cast<const Key<std::string>*>(&key);
+    if (kp) {
+        ky = kp->ky;
+    }
+}
+
+template<>
+inline void Key<std::string>::ReadKey(IndexFile &ndx)
+{
+    char *cp = new char[keylength+1];
+    ndx.ReadData(cp, keylength);
+    *(cp+keylength) = '\0';
+    ky = std::string(cp);
+    delete[] cp;
+}
+
+template<>
+inline void Key<std::string>::WriteKey(IndexFile &ndx)
+{
+    ky.resize(keylength);
+    ndx.WriteData(ky.c_str(), keylength);
+}
+
+template<>
+inline PdyKey *Key<std::string>::MakeKey() const
+{
+    PdyKey *newkey = new Key<std::string>(std::string('\0', keylength));
+    newkey->SetKeyLength(keylength);
+    return newkey;
+}
+
+// TODO: Research this, because strings can't be nulls?
+template<>
+inline bool Key<std::string>::isNullValue() const
+{
+    return ky == "";
+}
+
 
 #endif
