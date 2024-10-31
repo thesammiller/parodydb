@@ -124,6 +124,21 @@ TEST(KeyTest, KeyReadWrite) {
   EXPECT_EQ(key.KeyValue(), value);
 }
 
+TEST(KeyTest, IsNullValue) {
+  int value1 = 0;
+  Key<int> key1(value1);
+  auto newkey = key1.MakeKey();
+  EXPECT_EQ(newkey->isNullValue(), true);
+}
+
+
+TEST(KeyTest, NotIsNullValue) {
+  int value1 = 3;
+  Key<int> key1(value1);
+  EXPECT_EQ(key1.isNullValue(), false);
+}
+
+//std::string specialized functions
 
 
 

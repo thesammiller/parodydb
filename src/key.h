@@ -59,7 +59,7 @@ public:
     const ObjAddr *ObjectAddress() const
         { return reinterpret_cast<const ObjAddr*>(&ky); }
     virtual void CopyKeyData(const PdyKey &key);
-    PdyKey *MakeKey() const;
+    Key<T> *MakeKey() const;
 //public:
     Key(const T& key);
     virtual ~Key()
@@ -128,9 +128,9 @@ int Key<T>::operator==(const PdyKey &key) const
 // TODO: Shouldn't this incrememnt a node number or something?
 // How does it save to different memory?
 template <class T>
-PdyKey *Key<T>::MakeKey() const
+Key<T> *Key<T>::MakeKey() const
 {
-    PdyKey *newkey = new Key<T>(T(0));
+    Key *newkey = new Key<T>(T(0));
     newkey->SetKeyLength(keylength);
     return newkey;
 }
@@ -195,9 +195,10 @@ inline void Key<std::string>::WriteKey(IndexFile &ndx)
 }
 
 template<>
-inline PdyKey *Key<std::string>::MakeKey() const
+inline Key<std::string> *Key<std::string>::MakeKey() const
 {
-    PdyKey *newkey = new Key<std::string>(std::string('\0', keylength));
+    std::string newkeyname = std::string('\0', keylength);
+    Key *newkey = new Key<std::string>(newkeyname);
     newkey->SetKeyLength(keylength);
     return newkey;
 }
