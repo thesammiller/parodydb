@@ -194,6 +194,15 @@ TEST(KeyStringTest, IsNullValue) {
   EXPECT_EQ(nullvaluecheck, false);
 }
 
+TEST(CatKeyTest, Constructor) {
+  std::string value1 = "value1";
+  std::string value2 = "mybigvalue2";
+  CatKey<std::string, std::string> catkey(value1, value2);
+  EXPECT_EQ(catkey.keylength, value1.length()+value2.length());
+}
+
+
+
 
 
 

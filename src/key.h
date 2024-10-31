@@ -263,7 +263,8 @@ public:
 };
 
 template <class T1, class T2>
-CatKey<T1, T2>::CatKey(const T1& key1, const T2& key2) : ky1(key1), ky2(key2)
+CatKey<T1, T2>::CatKey(const T1& key1, const T2& key2)
+    : ky1(key1), ky2(key2)
 {
     keylength = ky1.GetKeyLength() + ky2.GetKeyLength();
 }
@@ -301,7 +302,7 @@ PdyKey& CatKey<T1, T2>::operator=(const PdyKey &key)
 {
     if (this != &key) {
         PdyKey::operator=(key);
-        CopyKeyData(&key);
+        CopyKeyData(key);
     }
     return *this;
 }
@@ -310,8 +311,8 @@ template <class T1, class T2>
 PdyKey *CatKey<T1, T2>::MakeKey() const
 {
     CatKey<T1,T2> *newkey = new CatKey<T1, T2>(T1(0), T2(0));
-    newkey->ky1.SetKeyLength(ky1.GetkeyLength());
-    newkey->ky2.SetKeyLength(ky2.GetkeyLength());
+    newkey->ky1.SetKeyLength(ky1.GetKeyLength());
+    newkey->ky2.SetKeyLength(ky2.GetKeyLength());
     newkey->SetKeyLength(keylength);
     return newkey;
 }
