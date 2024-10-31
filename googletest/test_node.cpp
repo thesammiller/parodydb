@@ -179,3 +179,21 @@ TEST(NodeTest, NodeAddress2) {
   node.CloseNode();
   remove(filename.c_str());
 }
+
+
+TEST(IndexFileTest, IndexFileCreateWrite) {
+  std::string filename = "./testfile.idx";
+  try {
+    IndexFile testidxfile(filename);
+    testidxfile.header.deletednode = 1;
+    testidxfile.header.highestnode = 2;
+    testidxfile.WriteData(&(testidxfile.header), sizeof testidxfile.header, 0);
+    // This NodeFile has an implicit ReadData
+    IndexFile checkidx(filename);
+    remove(filename.c_str());
+    EXPECT_EQ(checkidx.header.deletednode, testidxfile.header.deletednode);
+    EXPECT_EQ(checkidx.header.highestnode, testidxfile.header.highestnode);
+  }catch (FileReadError) {
+    remove(filename.c_str());
+  }
+}

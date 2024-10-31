@@ -55,13 +55,36 @@ TEST(PdyKeyTest, PdyKeyOperatorEq) {
   EXPECT_EQ(pdykey1.keylength, pdykey2.keylength);
 }
 
-
 TEST(KeyTest, KeyConstructor) {
   int value = 1;
   Key<int> key(value);
   EXPECT_EQ(key.KeyValue(), value);
   EXPECT_EQ(key.keylength, sizeof(int));
 }
+
+TEST(KeyTest, KeyCopyKeyData) {
+  int value1 = 1;
+  int value2 = 2;
+  Key<int> key1(value1);
+  Key<int> key2(value2);
+  key1.CopyKeyData(key2);
+  EXPECT_EQ(key1.KeyValue(), value2);
+}
+
+TEST(KeyTest, KeyReadWrite) {
+  int value = 5;
+  std::string filename = "./keytest";
+  IndexFile idx_file(filename);
+  Key<int> key(value);
+  key.WriteKey(idx_file);
+  IndexFile read_file(filename+".idx");
+  key.ReadKey(read_file);
+  remove((filename+".idx").c_str());
+  EXPECT_EQ(key.KeyValue(), value);
+}
+
+
+
 
 
 

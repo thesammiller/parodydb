@@ -88,108 +88,6 @@ Key<T>::Key(const T& key) : ky(key)
 
 
 
-// ======
-// concatenated key class
-// =====
-
-template <class T1, class T2>
-class CatKey : public PdyKey {
-    Key<T1> ky1;
-    Key<T2> ky2;
-    bool isObjectAddress() const {
-        return false;
-    }
-    const ObjAddr *ObjectAddress() const {
-        return 0;
-    }
-    void CopyKeyData(const PdyKey &key);
-    // ---- readkey/writekey must be specialized
-    //    if key(s) != simple data type
-    virtual void ReadKey(IndexFile &ndx) {
-        ky1.ReadKey(ndx); ky2.ReadKey(ndx);
-    }
-    virtual void WriteKey(IndexFile &ndx) {
-        ky1.WriteKey(ndx); ky2.WriteKey(ndx);
-    }
-    PdyKey *MakeKey() const;
-    bool isNullValue() const
-        { return ky1.isNullValue() && ky2.isNullValue(); }
-public:
-    CatKey(const T1& key1, const T2& key2);
-    ~CatKey() {}
-    PdyKey &operator=(const PdyKey &key);
-    int operator>(const PdyKey& key) const;
-    int operator==(const PdyKey& key) const;
-    Key<T1> &Key1()
-        { return ky1; }
-    T1 &Keyvalue()
-        {return ky1.Keyvalue();}
-    const T1 &keyvalue() const
-        { return ky1.Keyvalue();}
-    Key<T2> &Key2()
-        { return ky2; }
-    T2& Keyvalue2()
-        { return ky2.KeyValue(); }
-    const T2& KeyValue2() const
-        { return ky2.KeyValue(); }
-    void SetKeyvalue2(const T2& key2)
-        { ky2.SetKeyvalue(key2); }
-};
-
-template <class T1, class T2>
-CatKey<T1, T2>::CatKey(const T1& key1, const T2& key2) : ky1(key1), ky2(key2)
-{
-    keylength = ky1.GetKeyLength() + ky2.GetKeyLength();
-}
-
-template <class T1, class T2>
-int CatKey<T1, T2>::operator>(const PdyKey &key) const
-{
-    const CatKey<T1, T2> *ckp = static_cast<const CatKey<T1,T2>*>(&key);
-    if (ky1 > ckp->ky1) {
-        return 1;
-    }
-    if (ky1 == ckp->ky1 && ky2 > ckp->ky2) {
-        return 1;
-    }
-    return 0;
-}
-
-template <class T1, class T2>
-int CatKey<T1,T2>::operator==(const PdyKey &key) const
-{
-    const CatKey<T1, T2> *ckp = static_cast<const CatKey<T1, T2>*>(&key);
-    return ky1 == ckp->ky1 && ky2 == ckp->ky2;
-}
-
-template <class T1, class T2>
-void CatKey<T1, T2>::CopyKeyData(const PdyKey &key)
-{
-    const CatKey<T1, T2> *ckp = dynamic_cast<const CatKey<T1, T2>*>(&key);
-    ky1 = ckp->ky1;
-    ky2 = ckp->ky2;
-}
-
-template <class T1, class T2>
-PdyKey& CatKey<T1, T2>::operator=(const PdyKey &key)
-{
-    if (this != &key) {
-        PdyKey::operator=(key);
-        CopyKeyData(&key);
-    }
-    return *this;
-}
-
-template <class T1, class T2>
-PdyKey *CatKey<T1, T2>::MakeKey() const
-{
-    CatKey<T1,T2> *newkey = new CatKey<T1, T2>(T1(0), T2(0));
-    newkey->ky1.SetKeyLength(ky1.GetkeyLength());
-    newkey->ky2.SetKeyLength(ky2.GetkeyLength());
-    newkey->SetKeyLength(keylength);
-    return newkey;
-}
-
 template <class T>
 void Key<T>::CopyKeyData(const PdyKey &key)
 {
@@ -307,6 +205,110 @@ template<>
 inline bool Key<std::string>::isNullValue() const
 {
     return ky == "";
+}
+
+
+
+// ======
+// concatenated key class
+// =====
+
+template <class T1, class T2>
+class CatKey : public PdyKey {
+    Key<T1> ky1;
+    Key<T2> ky2;
+    bool isObjectAddress() const {
+        return false;
+    }
+    const ObjAddr *ObjectAddress() const {
+        return 0;
+    }
+    void CopyKeyData(const PdyKey &key);
+    // ---- readkey/writekey must be specialized
+    //    if key(s) != simple data type
+    virtual void ReadKey(IndexFile &ndx) {
+        ky1.ReadKey(ndx); ky2.ReadKey(ndx);
+    }
+    virtual void WriteKey(IndexFile &ndx) {
+        ky1.WriteKey(ndx); ky2.WriteKey(ndx);
+    }
+    PdyKey *MakeKey() const;
+    bool isNullValue() const
+        { return ky1.isNullValue() && ky2.isNullValue(); }
+public:
+    CatKey(const T1& key1, const T2& key2);
+    ~CatKey() {}
+    PdyKey &operator=(const PdyKey &key);
+    int operator>(const PdyKey& key) const;
+    int operator==(const PdyKey& key) const;
+    Key<T1> &Key1()
+        { return ky1; }
+    T1 &Keyvalue()
+        {return ky1.Keyvalue();}
+    const T1 &keyvalue() const
+        { return ky1.Keyvalue();}
+    Key<T2> &Key2()
+        { return ky2; }
+    T2& Keyvalue2()
+        { return ky2.KeyValue(); }
+    const T2& KeyValue2() const
+        { return ky2.KeyValue(); }
+    void SetKeyvalue2(const T2& key2)
+        { ky2.SetKeyvalue(key2); }
+};
+
+template <class T1, class T2>
+CatKey<T1, T2>::CatKey(const T1& key1, const T2& key2) : ky1(key1), ky2(key2)
+{
+    keylength = ky1.GetKeyLength() + ky2.GetKeyLength();
+}
+
+template <class T1, class T2>
+int CatKey<T1, T2>::operator>(const PdyKey &key) const
+{
+    const CatKey<T1, T2> *ckp = static_cast<const CatKey<T1,T2>*>(&key);
+    if (ky1 > ckp->ky1) {
+        return 1;
+    }
+    if (ky1 == ckp->ky1 && ky2 > ckp->ky2) {
+        return 1;
+    }
+    return 0;
+}
+
+template <class T1, class T2>
+int CatKey<T1,T2>::operator==(const PdyKey &key) const
+{
+    const CatKey<T1, T2> *ckp = static_cast<const CatKey<T1, T2>*>(&key);
+    return ky1 == ckp->ky1 && ky2 == ckp->ky2;
+}
+
+template <class T1, class T2>
+void CatKey<T1, T2>::CopyKeyData(const PdyKey &key)
+{
+    const CatKey<T1, T2> *ckp = dynamic_cast<const CatKey<T1, T2>*>(&key);
+    ky1 = ckp->ky1;
+    ky2 = ckp->ky2;
+}
+
+template <class T1, class T2>
+PdyKey& CatKey<T1, T2>::operator=(const PdyKey &key)
+{
+    if (this != &key) {
+        PdyKey::operator=(key);
+        CopyKeyData(&key);
+    }
+    return *this;
+}
+
+template <class T1, class T2>
+PdyKey *CatKey<T1, T2>::MakeKey() const
+{
+    CatKey<T1,T2> *newkey = new CatKey<T1, T2>(T1(0), T2(0));
+    newkey->ky1.SetKeyLength(ky1.GetkeyLength());
+    newkey->ky2.SetKeyLength(ky2.GetkeyLength());
+    newkey->SetKeyLength(keylength);
+    return newkey;
 }
 
 
