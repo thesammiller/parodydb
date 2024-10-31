@@ -118,9 +118,9 @@ TEST(KeyTest, KeyReadWrite) {
   IndexFile idx_file(filename);
   Key<int> key(value);
   key.WriteKey(idx_file);
-  IndexFile read_file(filename+".idx");
+  IndexFile read_file(filename);
   key.ReadKey(read_file);
-  remove((filename+".idx").c_str());
+  remove((filename+".ndx").c_str());
   EXPECT_EQ(key.KeyValue(), value);
 }
 
@@ -166,6 +166,20 @@ TEST(KeyStringTest, CopyKeyData) {
   EXPECT_EQ(key1.KeyValue(), key2.KeyValue());
   EXPECT_EQ(key1.keylength, key2.keylength);
 }
+
+
+TEST(KeyStringTest, KeyReadWrite) {
+  std::string value = "f4";
+  std::string filename = "./stringkeytest";
+  IndexFile idx_file(filename);
+  Key<std::string> key(value);
+  key.WriteKey(idx_file);
+  IndexFile read_file(filename);
+  key.ReadKey(read_file);
+  remove((filename+".ndx").c_str());
+  EXPECT_EQ(key.KeyValue(), value);
+}
+
 
 
 
