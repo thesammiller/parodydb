@@ -138,6 +138,20 @@ TEST(KeyTest, NotIsNullValue) {
   EXPECT_EQ(key1.isNullValue(), false);
 }
 
+//isObjectAddress
+TEST(KeyTest, IsObjectAddress) {
+  ObjAddr value1(3);
+  Key<ObjAddr> key1(value1);
+  EXPECT_EQ(key1.isObjectAddress(),true);
+}
+
+TEST(KeyTest, NotisObjectAddress) {
+  int value1 = 3;
+  Key<int> key1(value1);
+  EXPECT_EQ(key1.isObjectAddress(), false);
+}
+
+
 //std::string specialized functions
 
 
