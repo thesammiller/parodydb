@@ -125,6 +125,8 @@ int Key<T>::operator==(const PdyKey &key) const
     return false;
 }
 
+// TODO: Shouldn't this incrememnt a node number or something?
+// How does it save to different memory?
 template <class T>
 PdyKey *Key<T>::MakeKey() const
 {

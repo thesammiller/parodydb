@@ -71,6 +71,47 @@ TEST(KeyTest, KeyCopyKeyData) {
   EXPECT_EQ(key1.KeyValue(), value2);
 }
 
+TEST(KeyTest, KeyOperatorEq) {
+  int value1 = 1;
+  int value2 = 2;
+  Key<int> key1(value1);
+  Key<int> key2(value2);
+  key1 = key2;
+  EXPECT_EQ(key1.KeyValue(), value2);
+}
+
+TEST(KeyTest, KeyOperatorGt) {
+  int value1 = 1;
+  int value2 = 2;
+  Key<int> key1(value1);
+  Key<int> key2(value2);
+  bool result1 = key1 > key2;
+  bool result2 = key2 > key1;
+  EXPECT_EQ(result1, false);
+  EXPECT_EQ(result2, true);
+}
+
+
+TEST(KeyTest, KeyOperatorEqq) {
+  int value1 = 1;
+  int value3 = 3;
+  Key<int> key1(value1);
+  Key<int> key2(value1);
+  Key<int> key3(value3);
+  bool result1 = key1 == key2;
+  bool result2 = key2 == key3;
+  EXPECT_EQ(result1, true);
+  EXPECT_EQ(result2, false);
+}
+
+// TODO: Is this what MakeKey is doing?
+TEST(KeyTest, MakeKey) {
+  int value1 = 1;
+  Key<int> key1(value1);
+  auto newkey = key1.MakeKey();
+  EXPECT_EQ(newkey->keylength, key1.keylength);
+}
+
 TEST(KeyTest, KeyReadWrite) {
   int value = 5;
   std::string filename = "./keytest";
