@@ -180,7 +180,19 @@ TEST(KeyStringTest, KeyReadWrite) {
   EXPECT_EQ(key.KeyValue(), value);
 }
 
+TEST(KeyStringTest, MakeKey) {
+  std::string value = "value";
+  Key<std::string> key(value);
+  auto newkey = key.MakeKey();
+  EXPECT_EQ(newkey->KeyValue(), std::string(key.keylength, '\0'));
+}
 
+TEST(KeyStringTest, IsNullValue) {
+  std::string value = "value";
+  Key<std::string> key(value);
+  auto nullvaluecheck = key.isNullValue();
+  EXPECT_EQ(nullvaluecheck, false);
+}
 
 
 

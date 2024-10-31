@@ -199,7 +199,7 @@ inline void Key<std::string>::WriteKey(IndexFile &ndx)
 template<>
 inline Key<std::string> *Key<std::string>::MakeKey() const
 {
-    std::string newkeyname = std::string('\0', keylength);
+    std::string newkeyname = std::string(keylength, '\0');
     Key *newkey = new Key<std::string>(newkeyname);
     newkey->SetKeyLength(keylength);
     return newkey;
