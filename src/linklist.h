@@ -87,6 +87,7 @@ void LinkedList<T>::AppendEntry(T *entry)
 {
 	ListEntry<T> *newentry = new ListEntry<T>(entry);
 	newentry->preventry = lastentry;
+
 	if (lastentry) {
 		lastentry->nextentry = newentry;
 	}
@@ -94,6 +95,9 @@ void LinkedList<T>::AppendEntry(T *entry)
 		firstentry = newentry;
 	}
 	lastentry = newentry;
+	// FIX: If we only have one item, we need to update
+	// the item's previous entry to wraparound
+	firstentry->preventry = lastentry;
 }
 
 template <class T>
@@ -261,6 +265,8 @@ template <class T>
 // ---- return a specific linked list entry number
 short int LinkedList<T>::FindEntry(T *entry)
 {
+	// TODO: What about error handling here for no values?
+	// TODO: Prevent null references
 	short int pos = 0;
 	if (entry != 0) {
 		iterator = firstentry;
