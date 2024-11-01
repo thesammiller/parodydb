@@ -15,10 +15,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(all_tests
                 test_structs.cpp
                 test_node.cpp
-                test_key.cpp
-                test_linklist.cpp
                 ../src/node.cpp
+                test_key.cpp
                 ../src/key.cpp
+                test_linklist.cpp
+                test_btree.cpp
+                ../src/btree.cpp
+                test_tnode.cpp
+                ../src/tnode.cpp
 )
 #add_executable(test_node test_node.cpp ../src/node.cpp)
 #add_executable(test_key test_key.cpp ../src/key.h ../src/key.cpp ../src/node.cpp)

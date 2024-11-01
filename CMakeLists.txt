@@ -19,6 +19,9 @@ add_executable(
         src/structs.h
         src/key.cpp
         src/linklist.h
+        src/btree.cpp
+        src/btree.h
+        src/tnode.cpp
 )
 
 
