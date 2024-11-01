@@ -1,6 +1,7 @@
 #include "../src/linklist.h"
 
 #include <gtest/gtest.h>
+#include <mach/vm_types.h>
 
 TEST(ListEntry, Construct) {
   int i = 1;
@@ -137,15 +138,12 @@ TEST(LinkedList, PrevEntry) {
   EXPECT_EQ(i, *currententry);
 }
 
-
-TEST(LinkedList, PrevEntryWraparoundError) {
+TEST(LinkedList, PrevEntryNoNext) {
   LinkedList<int> list;
   int i = 1;
   int j = 2;
   list.AppendEntry(&i);
   list.AppendEntry(&j);
-  list.NextEntry();
-  // TODO: Fix this. This should be wrapping around to the last entry
   auto currententry = list.PrevEntry();
   EXPECT_EQ(j, *currententry);
 }
@@ -159,3 +157,149 @@ TEST(LinkedList, PrevEntrySkip) {
   auto currententry = list.PrevEntry(&j);
   EXPECT_EQ(i, *currententry);
 }
+
+TEST(LinkedList, RemoveEntry) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  list.AppendEntry(&i);
+  EXPECT_EQ(list.firstentry->thisentry, &i);
+  list.AppendEntry(&j);
+  list.RemoveEntry(&i);
+  EXPECT_EQ(list.firstentry->thisentry, &j);
+}
+
+TEST(LinkedList, RemoveEntryIteratorNotZero) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  list.AppendEntry(&i);
+  EXPECT_EQ(list.firstentry->thisentry, &i);
+  list.AppendEntry(&j);
+  list.NextEntry();
+  list.NextEntry();
+  list.RemoveEntry(&i);
+  EXPECT_EQ(list.firstentry->thisentry, &j);
+}
+
+TEST(LinkedList, RemoveEntryLentryZero) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  ListEntry<int> *nullentry = 0;
+  list.RemoveEntry(nullentry);
+}
+
+TEST(LinkedList, RemoveEntryLentryIterator) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.AppendEntry(&k);
+  list.NextEntry();
+  list.NextEntry();
+  list.RemoveEntry(list.iterator);
+  EXPECT_EQ(list.firstentry->thisentry, &i);
+  EXPECT_EQ(list.lastentry->thisentry, &k);
+}
+
+TEST(LinkedList, RemoveEntryLentryNext) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.AppendEntry(&k);
+  list.NextEntry();
+  list.NextEntry();
+  list.RemoveEntry(list.firstentry);
+  EXPECT_EQ(list.firstentry->thisentry, &j);
+  EXPECT_EQ(list.firstentry->nextentry, list.lastentry);
+  EXPECT_EQ(list.lastentry->preventry, list.firstentry);
+  EXPECT_EQ(list.lastentry->thisentry, &k);
+}
+
+
+TEST(LinkedList, RemoveEntryLentryPrev) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.AppendEntry(&k);
+  list.NextEntry();
+  list.NextEntry();
+  list.RemoveEntry(list.lastentry);
+  EXPECT_EQ(list.firstentry->thisentry, &i);
+  EXPECT_EQ(list.firstentry->nextentry, list.lastentry);
+  EXPECT_EQ(list.lastentry->preventry, list.firstentry);
+  EXPECT_EQ(list.lastentry->thisentry, &j);
+}
+
+
+TEST(LinkedList, RemoveEntryLentryValue) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.AppendEntry(&k);
+  list.RemoveEntry(&j);
+  EXPECT_EQ(list.firstentry->thisentry, &i);
+  EXPECT_EQ(list.firstentry->nextentry, list.lastentry);
+  EXPECT_EQ(list.lastentry->preventry, list.firstentry);
+  EXPECT_EQ(list.lastentry->thisentry, &k);
+}
+
+
+
+TEST(LinkedList, InsertEntry) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.InsertEntry(&k);
+  list.NextEntry();
+  list.NextEntry();
+  list.NextEntry();
+  EXPECT_EQ(list.iterator->thisentry, &k);
+}
+
+TEST(LinkedList, InsertEntryLentryPos) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.InsertEntry(&k, (short int) 0);
+  EXPECT_EQ(list.firstentry->thisentry, &k);
+}
+
+TEST(LinkedList, InsertEntryLentryPosOne) {
+  LinkedList<int> list;
+  int i = 1;
+  int j = 2;
+  int k = 3;
+  list.AppendEntry(&i);
+  list.AppendEntry(&j);
+  list.NextEntry();
+  list.NextEntry();
+  list.InsertEntry(&k, (short int) 1);
+  EXPECT_EQ(list.iterator->thisentry, &k);
+}
+
+
+// FindEntry
+// This seems to be covered by some of the others, like
+// Remove and Insert
+// TODO: Complete this as interested/desired/needed
+
+

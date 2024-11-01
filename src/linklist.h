@@ -46,6 +46,7 @@ public:
 	T *NextEntry(T *entry);
 	T *PrevEntry(T *entry);
 	void ClearList();
+	// worth tracking the size of the linked list? increment on append
 };
 
 template <class T>
@@ -97,7 +98,11 @@ void LinkedList<T>::AppendEntry(T *entry)
 	lastentry = newentry;
 	// FIX: If we only have one item, we need to update
 	// the item's previous entry to wraparound
-	firstentry->preventry = lastentry;
+	// firstentry->preventry = lastentry;
+	// Or is this a different data structure?
+	// Compare to when iterator == 0
+	// When is iterator != 0 and currententry->preventry = 0
+	// WHen it's the first entry
 }
 
 template <class T>
@@ -158,6 +163,7 @@ template <class T>
 T *LinkedList<T>::PrevEntry()
 {
 	if (iterator == 0) {
+		// This wraps around
 		iterator = lastentry;
 	}
 	else {
@@ -219,7 +225,7 @@ void LinkedList<T>::InsertEntry(T *entry, T *curr)
 }
 
 template <class T>
-// --- insert an intery into the linked list by psotion
+// --- insert an entry into the linked list by psotion
 void LinkedList<T>::InsertEntry(T *entry, short int pos)
 {	
 	FindEntry(pos);
