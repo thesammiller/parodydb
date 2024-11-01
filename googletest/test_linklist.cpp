@@ -10,7 +10,9 @@ TEST(ListEntry, Construct) {
 
 TEST(LinkedList, Construct) {
   LinkedList<int> list;
-  // TODO: Figure out what we test here
+  EXPECT_EQ(reinterpret_cast<std::uintptr_t>(list.iterator), 0);
+  EXPECT_EQ(reinterpret_cast<std::uintptr_t>(list.firstentry), 0);
+  EXPECT_EQ(reinterpret_cast<std::uintptr_t>(list.lastentry), 0);
 }
 
 TEST(LinkedList, AppendEntry) {
@@ -24,3 +26,17 @@ TEST(LinkedList, AppendEntry) {
   EXPECT_EQ(list.firstentry->nextentry, list.lastentry);
   EXPECT_EQ(list.lastentry->preventry, list.firstentry);
 }
+
+TEST(LinkedList, ClearEntry) {
+  LinkedList<int> list;
+  int i = 1;
+  list.AppendEntry(&i);
+  EXPECT_EQ(&i, list.firstentry->thisentry);
+  int j = 2;
+  list.ClearList();
+  EXPECT_EQ(reinterpret_cast<std::uintptr_t>(list.iterator), 0);
+  EXPECT_EQ(reinterpret_cast<std::uintptr_t>(list.firstentry), 0);
+  EXPECT_EQ(reinterpret_cast<std::uintptr_t>(list.lastentry), 0);
+}
+
+
