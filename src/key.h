@@ -220,6 +220,7 @@ inline bool Key<std::string>::isNullValue() const
 
 template <class T1, class T2>
 class CatKey : public PdyKey {
+public:
     Key<T1> ky1;
     Key<T2> ky2;
     bool isObjectAddress() const {
@@ -240,7 +241,7 @@ class CatKey : public PdyKey {
     PdyKey *MakeKey() const;
     bool isNullValue() const
         { return ky1.isNullValue() && ky2.isNullValue(); }
-public:
+//public:
     CatKey(const T1& key1, const T2& key2);
     ~CatKey() {}
     PdyKey &operator=(const PdyKey &key);
@@ -269,6 +270,8 @@ CatKey<T1, T2>::CatKey(const T1& key1, const T2& key2)
     keylength = ky1.GetKeyLength() + ky2.GetKeyLength();
 }
 
+// If my.key1 > your.key1 || my.key1 == your.key1 && my.key2 > your.key2
+// Basically think of it as big endian with two values
 template <class T1, class T2>
 int CatKey<T1, T2>::operator>(const PdyKey &key) const
 {
