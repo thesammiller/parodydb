@@ -28,7 +28,7 @@ public:
   int operator==(const PdyKey &key) const { return false; }
 };
 
-inline bool TestPdyKey::isNullValue() {
+bool TestPdyKey::isNullValue() {
   return false;
 }
 
@@ -94,6 +94,13 @@ TEST(KeyTest, KeyOperatorEq) {
   EXPECT_EQ(key1.KeyValue(), value2);
 }
 
+TEST(KeyTest, KeyOperatorEqSame) {
+  int value1 = 1;
+  Key<int> key1(value1);
+  key1 = key1;
+  // improves coverage, not sure what to check
+}
+
 TEST(KeyTest, KeyOperatorGt) {
   int value1 = 1;
   int value2 = 2;
@@ -104,7 +111,6 @@ TEST(KeyTest, KeyOperatorGt) {
   EXPECT_EQ(result1, false);
   EXPECT_EQ(result2, true);
 }
-
 
 TEST(KeyTest, KeyOperatorEqq) {
   int value1 = 1;

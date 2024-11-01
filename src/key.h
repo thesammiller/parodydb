@@ -18,9 +18,9 @@ public:
 	virtual void WriteKey(IndexFile &bfile) = 0;
     virtual void ReadKey(IndexFile &bfile) = 0;
     // isNullValue was virtual and causing problem for inheritance
-    bool isNullValue() { return false; };
+    bool isNullValue();
     // CopyKeyData also used to be virtual, but that caused problems
-    void CopyKeyData(const PdyKey &key) {};
+    void CopyKeyData(const PdyKey &key);
     virtual bool isObjectAddress() const = 0;
     virtual const ObjAddr *ObjectAddress() const = 0;
     virtual PdyKey *MakeKey() const = 0;

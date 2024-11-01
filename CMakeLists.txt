@@ -18,6 +18,7 @@ add_executable(
         src/node.h
         src/structs.h
         src/key.cpp
+        src/linklist.h
 )
 
 

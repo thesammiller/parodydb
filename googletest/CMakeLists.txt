@@ -16,6 +16,7 @@ add_executable(all_tests
                 test_structs.cpp
                 test_node.cpp
                 test_key.cpp
+                test_linklist.cpp
                 ../src/node.cpp
                 ../src/key.cpp
 )
