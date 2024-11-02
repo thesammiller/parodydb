@@ -33,6 +33,7 @@ TNode::TNode(PdyBtree *bt, NodeNbr nd) : Node(&(bt->GetIndexFile()), nd)
         NodeNbr fa;
         nx.ReadData(&fa, sizeof(NodeNbr));
         thiskey->fileaddr = fa;
+        printf("%p\n", thiskey->fileaddr);
 
         if (!header.isleaf) {
             NodeNbr lnode;

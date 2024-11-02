@@ -10,6 +10,7 @@
 #include "key.h"
 
 class PdyBtree; // Forward declaration for PdyBtree
+class TNode; // Forward declaration for PdyBtree
 class IndexFile; // Forward declaration for IndexFile
 //class Class; // Forward declaration for Class
 class PdyKey; // Forward declaration for PdyKey
@@ -26,54 +27,6 @@ public:
         { rootnode = 0; keylength = 0; }
 };
 
-
-// ------ b-tree TNode class
-class TNode : public Node {
-public:
-    // friend class PdyBtree;
-    struct TNodeHeader {
-        bool isleaf;
-        NodeNbr parent;
-        NodeNbr leftsibling;
-        NodeNbr rightsibling;
-        short int keycount;
-        NodeNbr lowernode;
-
-        TNodeHeader()
-        { isleaf = false; parent = leftsibling = rightsibling = keycount = lowernode = 0;}
-
-    } header;
-public:
-    PdyKey *currkey;
-    PdyBtree *btree;
-    LinkedList<PdyKey> keys;
-
-    TNode(PdyBtree *bt, NodeNbr node);
-    bool SearchNode(PdyKey *keyvalue);
-    void Insert(PdyKey *keyvalue);
-    short int m();
-    void WriteBtreeKey(PdyKey *thiskey);
-    void Adopt(NodeNbr node);
-    void Adoption();
-    bool isLeaf() const
-        { return header.isleaf; }
-    NodeNbr Parent() const
-        { return header.parent; }
-    NodeNbr LeftSibling() const
-        { return header.leftsibling; }
-    NodeNbr RightSibling() const
-        { return header.rightsibling; }
-    short int KeyCount() const
-        { return header.keycount; }
-    NodeNbr LowerNode() const
-        { return header.lowernode; }
-    bool Redistribute(NodeNbr sib);
-    bool Implode(TNode &right);
-    short int NodeHeaderSize() const
-        { return sizeof(TNodeHeader) + Node::NodeHeaderSize();}
-    TNode& operator=(TNode& tnode);
-    ~TNode();
-};
 
 // ----- b-tree index
 class PdyBtree {
@@ -124,5 +77,53 @@ public:
     { classindexed = cid; }
 };
 
+
+// ------ b-tree TNode class
+class TNode : public Node {
+public:
+    // friend class PdyBtree;
+    struct TNodeHeader {
+        bool isleaf;
+        NodeNbr parent;
+        NodeNbr leftsibling;
+        NodeNbr rightsibling;
+        short int keycount;
+        NodeNbr lowernode;
+
+        TNodeHeader()
+        { isleaf = false; parent = leftsibling = rightsibling = keycount = lowernode = 0;}
+
+    } header;
+public:
+    PdyKey *currkey;
+    PdyBtree *btree;
+    LinkedList<PdyKey> keys;
+
+    TNode(PdyBtree *bt, NodeNbr node);
+    bool SearchNode(PdyKey *keyvalue);
+    void Insert(PdyKey *keyvalue);
+    short int m();
+    void WriteBtreeKey(PdyKey *thiskey);
+    void Adopt(NodeNbr node);
+    void Adoption();
+    bool isLeaf() const
+        { return header.isleaf; }
+    NodeNbr Parent() const
+        { return header.parent; }
+    NodeNbr LeftSibling() const
+        { return header.leftsibling; }
+    NodeNbr RightSibling() const
+        { return header.rightsibling; }
+    short int KeyCount() const
+        { return header.keycount; }
+    NodeNbr LowerNode() const
+        { return header.lowernode; }
+    bool Redistribute(NodeNbr sib);
+    bool Implode(TNode &right);
+    short int NodeHeaderSize() const
+        { return sizeof(TNodeHeader) + Node::NodeHeaderSize();}
+    TNode& operator=(TNode& tnode);
+    ~TNode();
+};
 
 #endif

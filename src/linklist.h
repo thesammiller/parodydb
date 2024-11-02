@@ -11,6 +11,11 @@ class ListEntry	{
 public:
 	// Supposed to use friend class but compilation errors
 	// friend class LinkedList<T>;
+
+	// p. 160 in the book
+	// Each entry includes its own data values,
+	// a pointer to the list head (?!)
+	// and pointers to the next and previous entries
 	T *thisentry;
 	ListEntry<T> *nextentry;
 	ListEntry<T> *preventry;
@@ -164,6 +169,8 @@ T *LinkedList<T>::PrevEntry()
 {
 	if (iterator == 0) {
 		// This wraps around
+		// p. 160 in the book
+		// The first entry does not have a previous
 		iterator = lastentry;
 	}
 	else {
