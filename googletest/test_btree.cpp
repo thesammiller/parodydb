@@ -89,8 +89,25 @@ TEST(TestBTree, FirstFirst) {
 }
 
 
-
 TEST(TestBTree, Last) {
+  std::string m_filename = "btreetest";
+  IndexFile m_idxfile(m_filename);
+  Class m_class{};
+  int i = 1;
+  int j = 2;
+  Key<int> m_key (i);
+  Key<int> n_key (i);
+  PdyBtree btree(m_idxfile, &m_class, &m_key);
+  btree.Insert(&m_key);
+  btree.Insert(&n_key);
+  // Initialize the trnode object
+  btree.Last();
+  Key<int> *x_key =(Key<int>*) btree.Current();
+  EXPECT_EQ(x_key->ky, n_key.ky);
+  remove((m_filename + ".ndx").c_str());
+}
+
+TEST(TestBTree, FirstLast) {
   std::string m_filename = "btreetest";
   IndexFile m_idxfile(m_filename);
   Class m_class{};
@@ -109,7 +126,76 @@ TEST(TestBTree, Last) {
   remove((m_filename + ".ndx").c_str());
 }
 
+TEST(TestBTree, Next) {
+  std::string m_filename = "btreetest";
+  IndexFile m_idxfile(m_filename);
+  Class m_class{};
+  int i = 1;
+  Key<int> m_key (i);
+  PdyBtree btree(m_idxfile, &m_class, &m_key);
+  btree.Insert(&m_key);
+  btree.Next();
+  Key<int> *x_key =(Key<int>*) btree.Current();
+  EXPECT_EQ(x_key->ky, m_key.ky);
+  remove((m_filename + ".ndx").c_str());
+}
 
 
+TEST(TestBTree, FirstNext) {
+  std::string m_filename = "btreetest";
+  IndexFile m_idxfile(m_filename);
+  Class m_class{};
+  int i = 1;
+  int j = 2;
+  Key<int> m_key (i);
+  Key<int> n_key (j);
+  PdyBtree btree(m_idxfile, &m_class, &m_key);
+  btree.Insert(&m_key);
+  btree.Insert(&n_key);
+  btree.First();
+  btree.Next();
+  Key<int> *x_key =(Key<int>*) btree.Current();
+  EXPECT_EQ(x_key->ky, n_key.ky);
+  remove((m_filename + ".ndx").c_str());
+}
+
+
+
+TEST(TestBTree, Previous) {
+  std::string m_filename = "btreetest";
+  IndexFile m_idxfile(m_filename);
+  Class m_class{};
+  int i = 1;
+  int j = 2;
+  Key<int> m_key (i);
+  Key<int> n_key (j);
+  PdyBtree btree(m_idxfile, &m_class, &m_key);
+  btree.Insert(&m_key);
+  btree.Insert(&n_key);
+  btree.Previous();
+  Key<int> *x_key =(Key<int>*) btree.Current();
+  EXPECT_EQ(x_key->ky, n_key.ky);
+  remove((m_filename + ".ndx").c_str());
+}
+
+
+TEST(TestBTree, NextPrevious) {
+  std::string m_filename = "btreetest";
+  IndexFile m_idxfile(m_filename);
+  Class m_class{};
+  int i = 1;
+  int j = 2;
+  Key<int> m_key (i);
+  Key<int> n_key (j);
+  PdyBtree btree(m_idxfile, &m_class, &m_key);
+  btree.Insert(&m_key);
+  btree.Insert(&n_key);
+  btree.Next();
+  btree.Next();
+  btree.Previous();
+  Key<int> *x_key =(Key<int>*) btree.Current();
+  EXPECT_EQ(x_key->ky, m_key.ky);
+  remove((m_filename + ".ndx").c_str());
+}
 
 
