@@ -19,7 +19,7 @@ TNode::TNode(PdyBtree *bt, NodeNbr nd) : Node(&(bt->GetIndexFile()), nd)
         nx.ReadData(&header, sizeof(TNodeHeader), nad);
     } catch (FileReadError& e) {
         // ---- appending a new node
-        printf("Error reading index file, writing new file\n");
+        // printf("Error reading index file, writing new file\n");
         nx.WriteData(&header, sizeof(TNodeHeader), nad);
     }
 
@@ -33,7 +33,6 @@ TNode::TNode(PdyBtree *bt, NodeNbr nd) : Node(&(bt->GetIndexFile()), nd)
         NodeNbr fa;
         nx.ReadData(&fa, sizeof(NodeNbr));
         thiskey->fileaddr = fa;
-        printf("%p\n", thiskey->fileaddr);
 
         if (!header.isleaf) {
             NodeNbr lnode;
