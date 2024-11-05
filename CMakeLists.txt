@@ -22,6 +22,7 @@ add_executable(
         src/btree.cpp
         src/btree.h
         src/tnode.cpp
+        src/parody.cpp
 )
 
 

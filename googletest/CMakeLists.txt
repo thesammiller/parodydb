@@ -23,6 +23,7 @@ add_executable(all_tests
                 ../src/btree.cpp
                 test_tnode.cpp
                 ../src/tnode.cpp
+                ../src/parody.cpp
 )
 #add_executable(test_node test_node.cpp ../src/node.cpp)
 #add_executable(test_key test_key.cpp ../src/key.h ../src/key.cpp ../src/node.cpp)
