@@ -6,7 +6,6 @@
 #define KEY_H
 
 #include "node.h"
-#include "structs.h"
 
 // ======
 // PdyKey abstract base class

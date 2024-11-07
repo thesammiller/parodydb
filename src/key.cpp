@@ -43,3 +43,12 @@ PdyKey& PdyKey::operator=(const PdyKey& key)
 }
 
 
+bool PdyKey::isNullValue() {
+    // Implementation for isNullValue
+    return false;
+}
+
+void PdyKey::CopyKeyData(const PdyKey &key) {
+    // Implementation for CopyKeyData
+}
+

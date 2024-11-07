@@ -288,8 +288,8 @@ void WriteObject(const T& t)
     od->PdyWriteObject(&t, sizeof(T));
 }
 
-//inline
-void ReadObject(std::string &s)
+
+inline void ReadObject(std::string &s)
 {
     Persistent *oc = Persistent::ObjectBeingConstructed();
     oc->ReadStrObject(s);

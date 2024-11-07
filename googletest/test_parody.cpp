@@ -1,3 +1,8 @@
 #include "../src/parody.h"
 
-TEST(TestBTree, TreeheaderConstructor) {}
+#include <gtest/gtest.h>
+
+// TEST(TestPersistent, Constructor) {}
+
+
+TEST(TestParody, Constructor) {}
