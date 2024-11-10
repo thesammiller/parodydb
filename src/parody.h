@@ -12,7 +12,7 @@
 // Parody exceptions representing program errors
 // ===
 
-class PdyExceptions {};
+class PdyExceptions : public std::exception {};
 // read object
 class NotInConstructor : public PdyExceptions {};
 // write object
@@ -52,7 +52,59 @@ class BadObjAddr : public PdyExceptions {};
 #include "linklist.h"
 #include "btree.h"
 
-class Parody;
+class Persistent;
+
+// =======
+// DataFile class
+// ======
+
+class DataFile : public NodeFile {
+public:
+	DataFile(const std::string& name) : NodeFile(name+".dat")
+	{/* .... */}
+};
+
+
+
+// ======
+// Parody Database
+// ======
+
+class Parody {
+public:
+	friend Persistent;
+	DataFile datafile;	// the object datafile
+	IndexFile indexfile; 	// the b-tree file
+	LinkedList<Persistent> objects; // instantiated objects
+	LinkedList<Class> classes; 	// registered classes
+	LinkedList<PdyBtree> btrees;	// btrees in the database
+	// ---- for Index program to rebuild indexes
+	ObjAddr rebuildnode;	// object being rebuilt
+	Parody *previousdatabase; 	// previous open database
+	static Parody *opendatabase;	// latest open database
+	void GetObjectHeader(ObjAddr nd, ObjectHeader &objhdr);
+	void RebuildIndexes(ObjAddr nd)
+	{ rebuildnode = nd; }
+	bool FindClass(Class *cls, NodeNbr *nd= 0);
+	ClassID GetClassID(const char *classname);
+	//friend void BuildIndex();
+	// ---- private copy constructor & assignment prevent copies
+	Parody(Parody &) : datafile(std::string()), indexfile(std::string())
+	{ /* ... */ }
+	Parody &operator=(Parody &)
+	{ return *this; }
+	void RegisterIndexes(Class *cls, const Persistent& pcls);
+	// throw (ZeroLengthKey);
+	ClassID RegisterClass(const Persistent& cls);
+	Class *Registration(const Persistent& pcls);
+	void AddClassToIndex(Class *cls);
+	//public:
+	Parody(const std::string &name);
+	~Parody();
+	static Parody *OpenDatabase()
+	{ return opendatabase; }
+};
+
 
 //====
 // persistent object abstract base class
@@ -90,7 +142,7 @@ public:
 	//	{ /* ... */ }
 	Persistent& operator=(Persistent&)
 		{ return *this; }
-    Persistent(Persistent&) = delete;
+	Persistent(Persistent&) = delete;
 
 
 	// --- methods used from within Persistent class
@@ -112,7 +164,7 @@ public:
 	bool TestRelationships();
 	void ScanForward(NodeNbr nd);
 	void ScanBackward(NodeNbr nd);
-	void BuildObject(); //throw (NoDatabase);
+	void BuildObject() throw (NoDatabase);
 	void TestDuplicateObject(); // throw (Persistent*);
 //public:
 	// --- these are public members because template functions
@@ -141,7 +193,7 @@ public:
 //public
 	// --- called from derived class's destructor
 	// or by user to force output to db
-	void SaveObject(); // throw (NoDatabase);
+	void SaveObject() throw (NoDatabase);
 	
 	// ---- class interface methods for modifying database
 	bool AddObject();
@@ -165,64 +217,15 @@ public:
 };
 
 
-// ======= 
-// DataFile class
-// ======
-
-class DataFile : public NodeFile {
-public:
-	DataFile(const std::string& name) : NodeFile(name+".dat")
-		{/* .... */}
-};
-
-// ======
-// Parody Database
-// ======
-
-class Parody {
-public:
-	friend Persistent;
-	DataFile datafile;	// the object datafile
-	IndexFile indexfile; 	// the b-tree file
-	LinkedList<Persistent> objects; // instantiated objects
-	LinkedList<Class> classes; 	// registered classes
-	LinkedList<PdyBtree> btrees;	// btrees in the database
-	// ---- for Index program to rebuild indexes
-	ObjAddr rebuildnode;	// object being rebuilt
-	Parody *previousdatabase; 	// previous open database
-	static Parody *opendatabase;	// latest open database
-	void GetObjectHeader(ObjAddr nd, ObjectHeader &objhdr);
-	void RebuildIndexes(ObjAddr nd)
-		{ rebuildnode = nd; }
-	bool FindClass(Class *cls, NodeNbr *nd= 0);
-	ClassID GetClassID(const char *classname);
-	//friend void BuildIndex();
-	// ---- private copy constructor & assignment prevent copies
-	Parody(Parody &) : datafile(std::string()), indexfile(std::string())
-		{ /* ... */ }
-	Parody &operator=(Parody &)
-		{ return *this; }
-	void RegisterIndexes(Class *cls, const Persistent& pcls);
-		// throw (ZeroLengthKey);
-	ClassID RegisterClass(const Persistent& cls);
-	Class *Registration(const Persistent& pcls);
-	void AddClassToIndex(Class *cls);
-//public:
-	Parody(const std::string &name);
-	~Parody();
-	static Parody *OpenDatabase()
-		{ return opendatabase; }
-};
 
 // Persistent constructor using last declared database
 //inline 
 
 // ---- persistent constructor using specified database
-//inline 
-//Persistent::Persistent(Parody &db) : parody(db)
-//{
-//	BuildObject();
-//}
+inline Persistent::Persistent(Parody &db) : parody(db)
+{
+	BuildObject();
+}
 
 
 

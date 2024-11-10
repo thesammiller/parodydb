@@ -1,8 +1,10 @@
 // ------ parody.cpp
 
+#include "parody.h"
 #include "stdlib.h"
 #include "string.h"
-#include "parody.h"
+
+#include <unistd.h>
 
 Parody *Parody::opendatabase; // latest open database
 
@@ -60,18 +62,19 @@ bool Parody::FindClass(Class *cls, NodeNbr *nd)
 {
 	char classname[classnamesize];
 	ClassID cid = 0;
-	if (!indexfile.NewFile()) {
-		Node tmpnode;
+    bool indexfilenotnewfile = !indexfile.NewFile();
+    if (indexfilenotnewfile) {
+        Node tmpnode;
 		NodeNbr nx = 1;
 		// locate class header
 		while (nx != 0) {
 			tmpnode = Node(&indexfile, nx);
-			indexfile.ReadData(classname, classnamesize);
-			if (strcmp(classname, cls->classname) == 0) {
-				cls->headeraddr = indexfile.FilePosition();
-				cls->classid = cid;
-				return true;
-			}
+		    indexfile.ReadData(classname, classnamesize);
+		    if (strcmp(classname, cls->classname) == 0) {
+		        cls->headeraddr = indexfile.FilePosition();
+		        cls->classid = cid;
+		        return true;
+		    }
 			// ---- this node is not hte class header
 			cid++;
 			nx = tmpnode.NextNode();
@@ -82,6 +85,7 @@ bool Parody::FindClass(Class *cls, NodeNbr *nd)
 		}
 	}
 	cls->classid = cid;
+
 	return false;
 }
 
@@ -95,7 +99,7 @@ ClassID Parody::GetClassID(const char *classname)
 void Parody::AddClassToIndex(Class *cls)
 {
 	NodeNbr nd = 0;
-	
+	printf("Entering function\n");
 	if (FindClass(cls, &nd) == false) {
 		indexfile.ResetNewFile();
 		nd = nd ? nd : indexfile.NewNode();
@@ -141,7 +145,9 @@ void Parody::RegisterIndexes(Class *cls, const Persistent &pcls)
 ClassID Parody::RegisterClass(const Persistent& pcls)
 {
 	Class *cls = Registration(pcls);
+    printf("Here\n");
 	if (cls == 0) {
+	    printf("there\n");
 		cls = new Class;
 		const char *cn = typeid(pcls).name();
 		cls->classname = new char[strlen(cn)+1];
@@ -174,12 +180,11 @@ Persistent::Persistent() : parody(*Parody::OpenDatabase())
 
 
 // ----- common constructor code
-void Persistent::BuildObject()
-        //throw (NoDatabase)
+void Persistent::BuildObject() throw (NoDatabase)
 {
 	if (Parody::OpenDatabase() == 0) {
-	        // throw NoDatabase
-	        // TODO: Error
+	        throw NoDatabase();
+
 	}
 	prevconstructed = objconstructed;
 	objconstructed = this;
@@ -200,7 +205,7 @@ Persistent::~Persistent()
     // throw (notLoaded, NotSaved, MustDestroy)
 {
     if (Parody::OpenDatabase() == 0) {
-        // throw NoDatabase();
+         throw NoDatabase();
         // TODO: Error handling
     }
     RemoveObject();
@@ -387,8 +392,7 @@ void Persistent::ReadObjectHeader()
 
 // ---- called from derived destructor before all destruction
 // a new or existing object is being saved
-void Persistent::SaveObject()
-    // throw(NoDatabase)
+void Persistent::SaveObject() throw(NoDatabase)
 {
     if (Parody::OpenDatabase() == 0) {
         // throw Nodatabase();
