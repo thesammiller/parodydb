@@ -1,41 +1,5 @@
+#include <gtest/gtest.h>
 #include "../src/parody.h"
-
-#include <gtest/gtest.h>
-
-// TEST(TestPersistent, Constructor) {}
-
-
-#include <gtest/gtest.h>
-
-class TestPersistent : public Persistent {
-public:
-    void Write();
-    void Read();
-    TestPersistent();
-    explicit TestPersistent(Parody * pdb);
-};
-
-void TestPersistent::Write() {}
-void TestPersistent::Read() {}
-
-TestPersistent::TestPersistent() {
-    changed = false;
-    deleted = false;
-    loaded = false;
-}
-
-TestPersistent::TestPersistent(Parody *pdb) {
-    BuildObject();
-}
-
-class MockPersistentClass : public PersistentObject<int> {
-public:
-    explicit MockPersistentClass(int i) {
-        Obj = i;
-    }
-
-};
-
 
 TEST(TestParody, Constructor) {
     Parody pdb("testdatabase");
@@ -44,7 +8,6 @@ TEST(TestParody, Constructor) {
     EXPECT_EQ(Parody::opendatabase, &pdb);
 }
 
-
 TEST(TestParody, Destructor) {
     Parody* pdb = new Parody("testdatabase");
     delete pdb;
@@ -52,35 +15,56 @@ TEST(TestParody, Destructor) {
     EXPECT_EQ(Parody::opendatabase, nullptr);
 }
 
-
 TEST(TestPersistent, Constructor) {
     Parody pdb("testdatabase");
     // Ensure the Persistent object initializes without error
-    TestPersistent *persistent = new TestPersistent(&pdb);
+    Persistent *persistent = new Persistent(pdb);
+    EXPECT_TRUE(pdb.OpenDatabase() != 0);
 }
 
 
+TEST(TestPersistent, Registration) {
+    Parody pdb("testdatabase");
+    // Ensure the Persistent object initializes without error
+    Persistent *persistent = new Persistent(pdb);
+    EXPECT_TRUE(pdb.OpenDatabase() != 0);
+    auto cls = pdb.Registration(*persistent);
+    // 0
+    EXPECT_EQ(cls, pdb.classes.FirstEntry());
+}
+
+/*
+TEST(TestPersistent, RegistrationFirstEntry) {
+    Parody pdb("testdatabase");
+    // Ensure the Persistent object initializes without error
+    Persistent *persistent = new Persistent(pdb);
+    float x = 2.5;
+    PersistentObject<float> po(x);
+    auto cls = pdb.Registration(po);
+    // 0
+    printf("%d", cls);
+    EXPECT_EQ(cls, pdb.classes.FirstEntry());
+}
+*/
 
 
 /*
- *
- *I THINK -- Register a Class
- *Get a Class ID
- *Then create the class with the class name
- *THen you can add etc.
-TEST(TestParody, RegisterIndexes) {
-    Parody* pdb = new Parody("testdatabase");
-    std::string mockclassname = "MockPersistentClass";
-    Class mockClass((char *) mockclassname.c_str());
-    NodeNbr nodeNum;
-    MockPersistentClass mpc(1);
-    //pdb->RegisterClass(mpc);
-    // Ensure the database is closed and Parody::opendatabase resets.
+* I THINK -- Register a Class
+* Get a Class ID
+* Then create the class with the class name
+* Then you can add etc.
+*/
 
+TEST(TestPersistentObject, Constructor) {
+    Parody pdb("testdatabase");
+    auto hello = std::string("hello");
+    printf("1 -- Step\n");
+    PersistentObject<std::string> mpc(hello);
+    printf("2 -- Step\n");
 }
 
-
- *TEST(TestParody, FindClassNoAdd) {
+/*
+ TEST(TestParody, FindClassNoAdd) {
     Parody pdb("testdatabase");
     std::string mockclassname = "MockClassName";
     Class mockClass((char *) mockclassname.c_str());

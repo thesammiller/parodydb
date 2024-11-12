@@ -1,10 +1,7 @@
 // ------ parody.cpp
 
 #include "parody.h"
-#include "stdlib.h"
 #include "string.h"
-
-#include <unistd.h>
 
 Parody *Parody::opendatabase; // latest open database
 
@@ -67,7 +64,8 @@ bool Parody::FindClass(Class *cls, NodeNbr *nd)
         Node tmpnode;
 		NodeNbr nx = 1;
 		// locate class header
-		while (nx != 0) {
+        // added second part
+		while (nx != 0 && classname[0] != '\0') {
 			tmpnode = Node(&indexfile, nx);
 		    indexfile.ReadData(classname, classnamesize);
 		    if (strcmp(classname, cls->classname) == 0) {
@@ -144,8 +142,9 @@ void Parody::RegisterIndexes(Class *cls, const Persistent &pcls)
 
 ClassID Parody::RegisterClass(const Persistent& pcls)
 {
-	Class *cls = Registration(pcls);
     printf("Here\n");
+	Class *cls = Registration(pcls);
+    printf("%d", cls);
 	if (cls == 0) {
 	    printf("there\n");
 		cls = new Class;
@@ -161,6 +160,7 @@ ClassID Parody::RegisterClass(const Persistent& pcls)
 
 		classes.AppendEntry(cls);
 	}
+
 	return cls->classid;
 }
 	
@@ -178,13 +178,21 @@ Persistent::Persistent() : parody(*Parody::OpenDatabase())
     BuildObject();
 }
 
+void Persistent::Read() {
+
+}
+
+void Persistent::Write() {
+
+}
+
 
 // ----- common constructor code
 void Persistent::BuildObject() throw (NoDatabase)
 {
 	if (Parody::OpenDatabase() == 0) {
-	        throw NoDatabase();
-
+	    printf("ERROR: No database.\n");
+	    throw NoDatabase();
 	}
 	prevconstructed = objconstructed;
 	objconstructed = this;
@@ -201,8 +209,7 @@ void Persistent::BuildObject() throw (NoDatabase)
 }
 
    // ------ destructor
-Persistent::~Persistent()
-    // throw (notLoaded, NotSaved, MustDestroy)
+Persistent::~Persistent() throw (NotLoaded, NotSaved, MustDestroy)
 {
     if (Parody::OpenDatabase() == 0) {
          throw NoDatabase();
@@ -212,11 +219,11 @@ Persistent::~Persistent()
     keys.ClearList();
     delete node;
     if (!loaded) {}
-        //throw NotLoaded()
+        throw NotLoaded();
     if (!saved) {}
-        // throw NotSaved()
+        throw NotSaved();
     if (instances != 0) {}
-        // throw Mustdestroy()
+        throw MustDestroy();
 }
 
 void Persistent::Destroy(Persistent *pp)
@@ -330,7 +337,10 @@ void Persistent::TestDuplicateObject() // throw (Persistent*)
 // --- called from derived constructor after all construction
 void Persistent::LoadObject(ObjAddr nd)
 {
-    loaded = true;
+    printf("loaded\n");
+
+     loaded = true;
+
     objconstructed = 0;
     objhdr.classid = parody.RegisterClass(*this);
     objectaddress = nd;

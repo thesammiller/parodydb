@@ -4,8 +4,6 @@
 #define DATABASE_H
 
 #include <fstream>
-#include <typeinfo>
-#include <cstring>
 
 
 // ===
@@ -30,7 +28,7 @@ class ZeroLengthKey : public PdyExceptions {};
 // key length != btree key length
 class BadKeyLength : public PdyExceptions {};
 // bad reference object
-class badReference : public PdyExceptions {};
+class BadReference : public PdyExceptions {};
 // bad object address specified
 class BadObjAddr : public PdyExceptions {};
 
@@ -151,7 +149,7 @@ public:
 	void ObjectOut();
 	void RecordObject();
 	void RemoveObject();
-    void RemoveOrgKeys();
+	void RemoveOrgKeys();
 	void AddIndexes();
 	void DeleteIndexes();
 	void UpdateIndexes();
@@ -183,11 +181,10 @@ public:
 //protected:
 	Persistent();
 	Persistent(Parody &db);
-	virtual ~Persistent();
-		// throw (NotLoaded, NotSaved, MustDestroy);
+	~Persistent() throw (NotLoaded, NotSaved, MustDestroy);
 	// ---- provided by derived class
-	virtual void Write() = 0;
-	virtual void Read() = 0;
+	void Write();
+	void Read();
 	// called from derived class's constructor
 	void LoadObject(ObjAddr nd = 0);
 //public
@@ -227,24 +224,26 @@ inline Persistent::Persistent(Parody &db) : parody(db)
 	BuildObject();
 }
 
-
-
 // ======
 // PersistentObject template
 // =====
 
 template <class T>
 class PersistentObject : public Persistent {
+public:
 	void Read()
 		{PdyReadObject(reinterpret_cast<void*>(&Obj), sizeof(T));}
 	void Write()
 		{PdyWriteObject(reinterpret_cast<void*>(&Obj), sizeof(T));}
-public:
 	T Obj;
-	PersistentObject(const T& obj) : Obj(obj)
-		{LoadObject();}
-	PersistentObject(ObjAddr oa = 0)
-		{LoadObject(oa);}
+	PersistentObject(const T& obj) : Obj(obj) {
+		printf("PersistentObject -- Obj Constructor\n");
+		LoadObject();
+	}
+	PersistentObject(ObjAddr oa = 0) {
+		printf("PersistentObject -- ObjAddr Constructor\n");
+		LoadObject(oa);
+	}
 	virtual ~PersistentObject()
 		{SaveObject();}
 };
