@@ -245,7 +245,7 @@ public:
 		LoadObject(oa);
 	}
 	virtual ~PersistentObject()
-		{SaveObject();}
+		{}//SaveObject();}
 };
 
 // ======

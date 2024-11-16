@@ -51,6 +51,7 @@ void NodeFile::ReadData(void *buf, unsigned short siz, long wh) throw (FileReadE
     nfile.read(reinterpret_cast<char*>(buf), siz);
     if (nfile.fail() || nfile.eof()) {
         nfile.clear();
+        //printf("NodeFile::ReadData -- File Read Error\n");
         throw FileReadError();
     }
     nfile.seekp(nfile.tellg());

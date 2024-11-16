@@ -34,101 +34,36 @@ TEST(TestPersistent, Registration) {
 }
 
 /*
-TEST(TestPersistent, RegistrationFirstEntry) {
-    Parody pdb("testdatabase");
-    // Ensure the Persistent object initializes without error
-    Persistent *persistent = new Persistent(pdb);
-    float x = 2.5;
-    PersistentObject<float> po(x);
-    auto cls = pdb.Registration(po);
-    // 0
-    printf("%d", cls);
-    EXPECT_EQ(cls, pdb.classes.FirstEntry());
-}
-*/
-
-
-/*
-* I THINK -- Register a Class
-* Get a Class ID
-* Then create the class with the class name
-* Then you can add etc.
-*/
-
 TEST(TestPersistentObject, Constructor) {
     Parody pdb("testdatabase");
     auto hello = std::string("hello");
     printf("1 -- Step\n");
     PersistentObject<std::string> mpc(hello);
     printf("2 -- Step\n");
+}*/
+
+class SSN {
+public:
+    long ssn;
+    SSN(long s = 0) : ssn(s) {};
+};
+
+const short NameLength = 15;
+
+struct PayrollRcd {
+    SSN ssn;
+    char name[NameLength+1];
+    void Header();
+};
+
+TEST(Payroll, AddRecord) {
+    //main
+    auto *payroll = new Parody("PAYROLL");
+    PayrollRcd pr;
+    SSN ssn = SSN(1234567890);
+    pr.ssn = ssn;
+    strcpy(pr.name, "John");
+    PersistentObject<PayrollRcd> ppr(pr);
+    ppr.AddObject();
+    delete payroll;
 }
-
-/*
- TEST(TestParody, FindClassNoAdd) {
-    Parody pdb("testdatabase");
-    std::string mockclassname = "MockClassName";
-    Class mockClass((char *) mockclassname.c_str());
-    NodeNbr nodeNum;
-    bool found = pdb.FindClass(&mockClass, &nodeNum);
-    // Initial run may return false unless "MockClassName" exists
-    //EXPECT_EQ(found, false);
-}
-
-
-TEST(TestParody, AddClassToIndex) {
-    Parody pdb("testdatabase");
-    Class mockClass("MockClassName");
-    pdb.AddClassToIndex(&mockClass);
-    //ClassID classID = pdb.GetClassID("MockClassName");
-    //EXPECT_GT(classID, 0); // Class should now be indexed with a unique ID
-}
-
-
-
-
-
-TEST(TestParody, GetClassID) {
-    Parody pdb("testdatabase");
-    ClassID classID = pdb.GetClassID("NonExistentClass");
-    // Without adding this class, it should have a default ID
-    EXPECT_EQ(classID, 0); // Adjust based on mock behavior or initialization
-}
-
-
-TEST(TestParody, RegisterIndexes) {
-    Parody pdb("testdatabase");
-    TestPersistent mockPersistent;
-    Class mockClass("MockClassName");
-    pdb.RegisterIndexes(&mockClass, mockPersistent);
-    // Ensure indexes were added; requires checking Parody internals
-    EXPECT_TRUE(pdb.btrees.FirstEntry() != nullptr);
-}
-
-TEST(TestParody, RegisterClass) {
-    Parody pdb("testdatabase");
-    TestPersistent mockPersistent;
-    ClassID classID = pdb.RegisterClass(mockPersistent);
-    EXPECT_GT(classID, 0); // Should assign a positive ID for a new class
-}
-
-
-TEST(TestParody, GetObjectHeader) {
-    Parody pdb("testdatabase");
-    ObjectHeader objHeader{};
-    ObjAddr testAddr = 123;
-    pdb.GetObjectHeader(testAddr, objHeader);
-    // Assuming the function reads correctly, verify data:
-    EXPECT_EQ(objHeader.classid, 0); // Based on initial setup or mock
-}
-
-
-TEST(TestParody, Registration) {
-    Parody pdb("testdatabase");
-    TestPersistent pcls;
-    Class* registeredClass = pdb.Registration(pcls);
-    EXPECT_NE(registeredClass, nullptr);
-}
-
-*/
-
-
