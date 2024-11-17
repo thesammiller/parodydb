@@ -183,8 +183,8 @@ public:
 	Persistent(Parody &db);
 	~Persistent() throw (NotLoaded, NotSaved, MustDestroy);
 	// ---- provided by derived class
-	void Write();
-	void Read();
+	virtual void Write();
+	virtual void Read();
 	// called from derived class's constructor
 	void LoadObject(ObjAddr nd = 0);
 //public

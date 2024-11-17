@@ -217,11 +217,11 @@ Persistent::~Persistent() throw (NotLoaded, NotSaved, MustDestroy)
     keys.ClearList();
     delete node;
     if (!loaded) {}
-        throw NotLoaded();
+        //throw NotLoaded();
     if (!saved) {}
-        throw NotSaved();
+        //throw NotSaved();
     if (instances != 0) {}
-        throw MustDestroy();
+        //throw MustDestroy();
 }
 
 void Persistent::Destroy(Persistent *pp)
@@ -325,7 +325,8 @@ void Persistent::TestDuplicateObject() // throw (Persistent*)
                 // --- object already instantiated
                 obj->instances++;
                 saved = true;
-                throw obj;
+                //throw obj;
+                return;
             }
             obj = parody.objects.NextEntry();
         }
