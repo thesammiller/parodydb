@@ -174,14 +174,6 @@ Persistent::Persistent() : parody(*Parody::OpenDatabase())
     BuildObject();
 }
 
-void Persistent::Read() {
-
-}
-
-void Persistent::Write() {
-
-}
-
 
 // ----- common constructor code
 void Persistent::BuildObject() throw (NoDatabase)
@@ -314,6 +306,14 @@ void Persistent::RemoveObject()
     RemoveOrgKeys();
 }
 
+
+void Persistent::Read() {
+    printf("Persistent Read\n");
+}
+void Persistent::Write() {
+    printf("Persistent Write\n");
+}
+
 // ---- remove the record of the object's state
 void Persistent::TestDuplicateObject() // throw (Persistent*)
 {
@@ -402,6 +402,7 @@ void Persistent::SaveObject() throw(NoDatabase)
     if (Parody::OpenDatabase() == 0) {
         // throw Nodatabase();
         // TODO: Error
+        return;
     }
     saved = true;
     if (parody.rebuildnode) {

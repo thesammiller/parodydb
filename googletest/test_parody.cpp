@@ -66,4 +66,38 @@ TEST(Payroll, AddRecord) {
     PersistentObject<PayrollRcd> ppr(pr);
     ppr.AddObject();
     delete payroll;
+    remove("PAYROLL.ndx");
+    remove("PAYROLL.dat");
+}
+
+
+TEST(Payroll, SaveObject) {
+    //main
+    auto *payroll = new Parody("PAYROLL");
+    PayrollRcd pr;
+    SSN ssn = SSN(1234567890);
+    pr.ssn = ssn;
+    strcpy(pr.name, "John");
+    PersistentObject<PayrollRcd> ppr(pr);
+    ppr.AddObject();
+    ppr.SaveObject();
+    PayrollRcd kermit;
+    SSN kermitssn = SSN(333445555);
+    kermit.ssn = kermitssn;
+    strcpy(kermit.name, "Kermit");
+    PersistentObject<PayrollRcd> kermitpr(kermit);
+    kermitpr.AddObject();
+    kermitpr.SaveObject();
+    PersistentObject<PayrollRcd> openpr;
+    openpr.FirstObject();
+    while (openpr.ObjectExists()) {
+        printf(openpr.Obj.name);
+        printf(" ");
+        printf(std::to_string(openpr.Obj.ssn.ssn).c_str());
+        printf("\n");
+        openpr.NextObject();
+    }
+    remove("PAYROLL.dat");
+    remove("PAYROLL.ndx");
+    delete payroll;
 }

@@ -183,8 +183,8 @@ public:
 	Persistent(Parody &db);
 	~Persistent() throw (NotLoaded, NotSaved, MustDestroy);
 	// ---- provided by derived class
-	void Write();
-	void Read();
+	virtual void Write();
+	virtual void Read();
 	// called from derived class's constructor
 	void LoadObject(ObjAddr nd = 0);
 //public
@@ -214,7 +214,6 @@ public:
 };
 
 
-
 // Persistent constructor using last declared database
 //inline 
 
@@ -231,10 +230,8 @@ inline Persistent::Persistent(Parody &db) : parody(db)
 template <class T>
 class PersistentObject : public Persistent {
 public:
-	void Read()
-		{PdyReadObject(reinterpret_cast<void*>(&Obj), sizeof(T));}
-	void Write()
-		{PdyWriteObject(reinterpret_cast<void*>(&Obj), sizeof(T));}
+	void Read();
+	void Write();
 	T Obj;
 	PersistentObject(const T& obj) : Obj(obj) {
 		printf("PersistentObject -- Obj Constructor\n");
@@ -248,6 +245,18 @@ public:
 		{}//SaveObject();}
 };
 
+template <class T>
+inline void PersistentObject<T>::Read() {
+	printf("Persistent Object Read\n");
+	PdyReadObject(reinterpret_cast<void*>(&Obj), sizeof(T));
+}
+
+template <class T>
+inline void PersistentObject<T>::Write() {
+	printf("Persistent Object Read\n");
+	PdyWriteObject(reinterpret_cast<void*>(&Obj), sizeof(T));
+}
+
 // ======
 // Reference template
 // ======
@@ -256,7 +265,7 @@ class Reference {
 public:
 	T *obj;
 	Reference();
-    ~Reference();
+	~Reference();
 	void ReadObject();
 	void WriteObject();
 	void operator=(T& to); // throw (BadReference);
