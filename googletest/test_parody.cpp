@@ -152,3 +152,27 @@ TEST(Payroll, FindIndexNotZero) {
     remove("PAYROLL.dat");
     remove("PAYROLL.ndx");
 }
+
+
+TEST(Payroll, OpenAndClose) {
+    //main
+    auto *payroll = new Parody("PAYROLL");
+    PayrollRcd pr;
+    SSN ssn = SSN(1234567890);
+    pr.ssn = ssn;
+    strcpy(pr.name, "John");
+    PersistentObject<PayrollRcd> ppr(pr);
+    ppr.AddObject();
+    ppr.SaveObject();
+    delete payroll;
+
+    auto *payroll2 = new Parody("PAYROLL");
+    PersistentObject<PayrollRcd> openpr;
+    openpr.FirstObject();
+    EXPECT_STREQ(openpr.Obj.name, pr.name);
+    EXPECT_EQ(openpr.Obj.ssn.ssn, pr.ssn.ssn);
+    delete payroll2;
+    remove("PAYROLL.dat");
+    remove("PAYROLL.ndx");
+}
+
