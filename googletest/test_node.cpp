@@ -6,7 +6,7 @@ TEST(NodeFileTest, TestNodeFileConstructor) {
   NodeFile testnodefile(filename);
   bool newfile = access(filename.c_str(), 0);
   remove(filename.c_str());
-  //EXPECT_TRUE(newfile);
+  EXPECT_TRUE(!newfile);
 }
 
 
