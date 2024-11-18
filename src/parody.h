@@ -237,15 +237,13 @@ public:
 		{PdyWriteObject(reinterpret_cast<void*>(&Obj), sizeof(T));}
 	T Obj;
 	PersistentObject(const T& obj) : Obj(obj) {
-		printf("PersistentObject -- Obj Constructor\n");
 		LoadObject();
 	}
 	PersistentObject(ObjAddr oa = 0) {
-		printf("PersistentObject -- ObjAddr Constructor\n");
 		LoadObject(oa);
 	}
 	virtual ~PersistentObject()
-		{}//SaveObject();}
+		{SaveObject();}
 };
 
 // ======

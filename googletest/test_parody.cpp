@@ -119,3 +119,32 @@ TEST(Payroll, NextObject) {
 }
 
 
+TEST(Payroll, FindIndexNotZero) {
+    //main
+    auto *payroll = new Parody("PAYROLL");
+    PayrollRcd pr;
+    SSN ssn = SSN(1234567890);
+    pr.ssn = ssn;
+    strcpy(pr.name, "John");
+    PersistentObject<PayrollRcd> ppr(pr);
+    ppr.AddObject();
+    ppr.SaveObject();
+    PayrollRcd kermit;
+    SSN kermitssn = SSN(333445555);
+    kermit.ssn = ssn;
+    strcpy(kermit.name, "Kermit");
+    PersistentObject<PayrollRcd> kermitpr(kermit);
+    kermitpr.AddObject();
+    kermitpr.SaveObject();
+    PersistentObject<PayrollRcd> openpr;
+    openpr.FirstObject();
+    //auto key = new PdyKey(1);
+    openpr.FindIndex(0);
+    EXPECT_STREQ(openpr.Obj.name, pr.name);
+    EXPECT_EQ(openpr.Obj.ssn.ssn, pr.ssn.ssn);
+    delete payroll;
+    remove("PAYROLL.dat");
+    remove("PAYROLL.ndx");
+}
+
+
