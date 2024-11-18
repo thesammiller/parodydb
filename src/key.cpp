@@ -3,8 +3,7 @@
 #include "key.h"
 // Uses IndexFile, which is derived from NodeFile
 #include "node.h"
-
-
+#include "parody.h"
 
 // ======
 // base PdyKey class member functions
@@ -18,7 +17,7 @@ PdyKey::PdyKey(NodeNbr fa)
     /* TODO: Persistent being called here seems weird to me
      * Need to do more research about how this is setup
      * Ideally would like to remove circular dependencies
-
+    */
     if (Persistent::objconstructed != 0) {
         // ---- register the key with the object being built
         Persistent::objconstructed->RegisterKey(this);
@@ -26,7 +25,6 @@ PdyKey::PdyKey(NodeNbr fa)
         // ---- assign index number based on position in object
         indexno = Persistent::objconstructed->indexcount++;
     }
-     */
 }
 
 // ------ overloaded =

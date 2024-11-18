@@ -234,26 +234,22 @@ public:
 	void Write();
 	T Obj;
 	PersistentObject(const T& obj) : Obj(obj) {
-		printf("PersistentObject -- Obj Constructor\n");
 		LoadObject();
 	}
 	PersistentObject(ObjAddr oa = 0) {
-		printf("PersistentObject -- ObjAddr Constructor\n");
 		LoadObject(oa);
 	}
 	virtual ~PersistentObject()
-		{}//SaveObject();}
+		{SaveObject();}
 };
 
 template <class T>
 inline void PersistentObject<T>::Read() {
-	printf("Persistent Object Read\n");
 	PdyReadObject(reinterpret_cast<void*>(&Obj), sizeof(T));
 }
 
 template <class T>
 inline void PersistentObject<T>::Write() {
-	printf("Persistent Object Read\n");
 	PdyWriteObject(reinterpret_cast<void*>(&Obj), sizeof(T));
 }
 

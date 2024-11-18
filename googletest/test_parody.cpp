@@ -65,6 +65,7 @@ TEST(Payroll, AddRecord) {
     strcpy(pr.name, "John");
     PersistentObject<PayrollRcd> ppr(pr);
     ppr.AddObject();
+    ppr.SaveObject();
     delete payroll;
     remove("PAYROLL.ndx");
     remove("PAYROLL.dat");
@@ -72,6 +73,31 @@ TEST(Payroll, AddRecord) {
 
 
 TEST(Payroll, SaveObject) {
+    remove("PAYROLL.dat");
+    remove("PAYROLL.ndx");
+}
+
+
+TEST(Payroll, FirstObject) {
+    //main
+    auto *payroll = new Parody("PAYROLL");
+    PayrollRcd pr;
+    SSN ssn = SSN(1234567890);
+    pr.ssn = ssn;
+    strcpy(pr.name, "John");
+    PersistentObject<PayrollRcd> ppr(pr);
+    ppr.AddObject();
+    ppr.SaveObject();
+    PersistentObject<PayrollRcd> openpr;
+    openpr.FirstObject();
+    EXPECT_STREQ(openpr.Obj.name, pr.name);
+    EXPECT_EQ(openpr.Obj.ssn.ssn, pr.ssn.ssn);
+    delete payroll;
+    remove("PAYROLL.dat");
+    remove("PAYROLL.ndx");
+}
+
+TEST(Payroll, NextObject) {
     //main
     auto *payroll = new Parody("PAYROLL");
     PayrollRcd pr;
@@ -90,14 +116,39 @@ TEST(Payroll, SaveObject) {
     kermitpr.SaveObject();
     PersistentObject<PayrollRcd> openpr;
     openpr.FirstObject();
-    while (openpr.ObjectExists()) {
-        printf(openpr.Obj.name);
-        printf(" ");
-        printf(std::to_string(openpr.Obj.ssn.ssn).c_str());
-        printf("\n");
-        openpr.NextObject();
-    }
+    openpr.NextObject();
+    EXPECT_STREQ(openpr.Obj.name, kermit.name);
+    EXPECT_EQ(openpr.Obj.ssn.ssn, kermit.ssn.ssn);
+    delete payroll;
     remove("PAYROLL.dat");
     remove("PAYROLL.ndx");
+}
+
+
+TEST(Payroll, FindIndexNotZero) {
+    //main
+    auto *payroll = new Parody("PAYROLL");
+    PayrollRcd pr;
+    SSN ssn = SSN(1234567890);
+    pr.ssn = ssn;
+    strcpy(pr.name, "John");
+    PersistentObject<PayrollRcd> ppr(pr);
+    ppr.AddObject();
+    ppr.SaveObject();
+    PayrollRcd kermit;
+    SSN kermitssn = SSN(333445555);
+    kermit.ssn = ssn;
+    strcpy(kermit.name, "Kermit");
+    PersistentObject<PayrollRcd> kermitpr(kermit);
+    kermitpr.AddObject();
+    kermitpr.SaveObject();
+    PersistentObject<PayrollRcd> openpr;
+    openpr.FirstObject();
+    //auto key = new PdyKey(1);
+    openpr.FindIndex(0);
+    EXPECT_STREQ(openpr.Obj.name, pr.name);
+    EXPECT_EQ(openpr.Obj.ssn.ssn, pr.ssn.ssn);
     delete payroll;
+    remove("PAYROLL.dat");
+    remove("PAYROLL.ndx");
 }
