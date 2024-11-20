@@ -37,13 +37,14 @@ public:
 // ====
 class NodeFile {
 public:
+    std::string name;
     FileHeader header;
     FileHeader origheader;
     std::fstream nfile;
     bool newfile;
 // public:
-    NodeFile(const std::string& filename)
-        throw (BadFileOpen);
+    NodeFile(const std::string& filename) throw (BadFileOpen);
+
     virtual ~NodeFile();
     void SetDeletedNode(NodeNbr node)
             { header.deletednode = node; }

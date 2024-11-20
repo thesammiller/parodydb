@@ -9,6 +9,7 @@
 
 NodeFile::NodeFile(const std::string& filename) throw (BadFileOpen)
 {
+    name = filename;
     header = FileHeader();
     newfile = access(filename.c_str(), 0) != 0;
     // ---- open the file

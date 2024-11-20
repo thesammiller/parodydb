@@ -336,7 +336,7 @@ void Persistent::TestDuplicateObject() // throw (Persistent*)
 // --- called from derived constructor after all construction
 void Persistent::LoadObject(ObjAddr nd)
 {
-     loaded = true;
+    loaded = true;
     objconstructed = 0;
     objhdr.classid = parody.RegisterClass(*this);
     objectaddress = nd;

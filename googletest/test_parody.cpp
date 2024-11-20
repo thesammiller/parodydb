@@ -153,14 +153,17 @@ TEST(Payroll, FindIndexNotZero) {
     remove("PAYROLL.ndx");
 }
 
-
+// This is the basic function of a persistent database...
+// Opening and closing a persistent file
 TEST(Payroll, OpenAndClose) {
     //main
     auto *payroll = new Parody("PAYROLL");
     PayrollRcd pr;
     SSN ssn = SSN(1234567890);
     pr.ssn = ssn;
-    strcpy(pr.name, "John");
+    int namelength = 4;
+    strncpy(pr.name, "John", namelength);
+    pr.name[namelength] = '\0';
     PersistentObject<PayrollRcd> ppr(pr);
     ppr.AddObject();
     ppr.SaveObject();
@@ -169,10 +172,11 @@ TEST(Payroll, OpenAndClose) {
     auto *payroll2 = new Parody("PAYROLL");
     PersistentObject<PayrollRcd> openpr;
     openpr.FirstObject();
+    EXPECT_TRUE(openpr.ObjectExists());
     EXPECT_STREQ(openpr.Obj.name, pr.name);
     EXPECT_EQ(openpr.Obj.ssn.ssn, pr.ssn.ssn);
     delete payroll2;
-    remove("PAYROLL.dat");
-    remove("PAYROLL.ndx");
+    //remove("PAYROLL.dat");
+    //remove("PAYROLL.ndx");
 }
 
